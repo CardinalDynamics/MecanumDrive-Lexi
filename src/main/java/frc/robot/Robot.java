@@ -123,10 +123,24 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     drive.driveCartesian(controller.getLeftY(), controller.getLeftX(), -controller.getRightX());
 
-    while (controller.getAButtonPressed) {
+    while (controller.getLeftBumper()) {
       intakeLift.set(1);
     }
-
+    while (controller.getRightBumper()) {
+      intakeLift.set(-1);
+    }
+    while (controller.getAButton()) {
+      bunnyIntake.set(.5);
+    }
+    while (controller.getBButton()) {
+      bunnyIntake.set(-.5);
+    }
+    while (controller.getXButton()) {
+      tubeIntake.set(.5);
+    }
+    while (controller.getYButton()) {
+      tubeIntake.set(-.5);
+    }
   }
 
   /** This function is called once when the robot is disabled. */
