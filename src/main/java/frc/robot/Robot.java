@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -21,11 +20,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends TimedRobot {
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
-  private String m_autoSelected;
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
-
   private PWMSparkMax frontLeft = new PWMSparkMax(0);
   private PWMSparkMax rearLeft = new PWMSparkMax(1);
   private PWMSparkMax frontRight = new PWMSparkMax(4);
@@ -49,16 +43,15 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
-    drive.setDeadband(0.1);
+    drive.setDeadband(0.25);
     frontRight.setInverted(true);
     rearRight.setInverted(true);
     SmartDashboard.putNumber("Front Left", frontLeft.get());
     SmartDashboard.putNumber("Rear Left", rearLeft.get());
     SmartDashboard.putNumber("Front Right", frontRight.get());
     SmartDashboard.putNumber("Rear Right", rearRight.get());
+
+    
   }
 
   /**
@@ -94,23 +87,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
-    }
   }
 
   /** This function is called once when teleop is enabled. */
@@ -123,23 +104,35 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     drive.driveCartesian(controller.getLeftY(), controller.getLeftX(), -controller.getRightX());
 
-    while (controller.getLeftBumper()) {
-      intakeLift.set(1);
+    if (controller.getLeftBumperPressed()) {
+      intakeLift.set(.1);
+    } else {
+      intakeLift.set(0);
     }
-    while (controller.getRightBumper()) {
-      intakeLift.set(-1);
+    if (controller.getRightBumperPressed()) {
+      intakeLift.set(-.1);
+    } else {
+      intakeLift.set(0);
     }
-    while (controller.getAButton()) {
-      bunnyIntake.set(.5);
+    if (controller.getAButtonPressed()) {
+      bunnyIntake.set(1);
+    } else {
+      bunnyIntake.set(0);
     }
-    while (controller.getBButton()) {
-      bunnyIntake.set(-.5);
+    if (controller.getBButtonPressed()) {
+      bunnyIntake.set(-1);
+    } else {
+      bunnyIntake.set(0);
     }
-    while (controller.getXButton()) {
-      tubeIntake.set(.5);
+    if (controller.getXButtonPressed()) {
+      tubeIntake.set(.1);
+    } else {
+      tubeIntake.set(0);
     }
-    while (controller.getYButton()) {
-      tubeIntake.set(-.5);
+    if (controller.getYButtonPressed()) {
+      tubeIntake.set(-.15);
+    } else {
+      tubeIntake.set(0);
     }
   }
 
